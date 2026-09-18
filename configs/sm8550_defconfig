@@ -241,3 +241,8 @@ CONFIG_UFS_QCOM=y
 # arm64 "Image" header parsing, needed for booti to size/relocate the
 # kernel correctly.
 CONFIG_LINUX_KERNEL_IMAGE_HEADER=y
+
+# Pass the framebuffer U-Boot set up into the OS, so the kernel's early
+# simplefb can take over. Without this the kernel has no console until
+# its own DRM probe succeeds -- and if that probe fails, nothing at all.
+CONFIG_VIDEO_DT_SIMPLEFB=y
