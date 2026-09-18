@@ -1,0 +1,49 @@
+name: Build U-Boot for sheng
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build deps
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gcc-aarch64-linux-gnu bison flex libssl-dev \
+            python3 python3-setuptools python3-dev swig \
+            device-tree-compiler bc
+
+      - name: Install Zig
+        run: |
+          set -euxo pipefail
+          ZIG_VER=0.13.0
+          curl -fsSL -o /tmp/zig.tar.xz \
+            "https://ziglang.org/download/${ZIG_VER}/zig-linux-x86_64-${ZIG_VER}.tar.xz"
+          tar -xJf /tmp/zig.tar.xz -C /opt
+          echo "/opt/zig-linux-x86_64-${ZIG_VER}" >> "$GITHUB_PATH"
+          /opt/zig-linux-x86_64-${ZIG_VER}/zig version
+
+      - name: Build
+        run: |
+          set -euxo pipefail
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          make sm8550_defconfig
+          make -j"$(nproc)"
+
+      - name: List outputs
+        run: ls -l u-boot u-boot.bin u-boot.img u-boot.mbn 2>&1 || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: u-boot-sheng
+          path: |
+            u-boot
+            u-boot.bin
+            u-boot.img
+            u-boot.mbn
+          if-no-files-found: warn
