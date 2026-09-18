@@ -21,12 +21,12 @@ jobs:
       - name: Install Zig
         run: |
           set -euxo pipefail
-          ZIG_VER=0.13.0
+          ZIG_VER=0.14.1
           curl -fsSL -o /tmp/zig.tar.xz \
-            "https://ziglang.org/download/${ZIG_VER}/zig-linux-x86_64-${ZIG_VER}.tar.xz"
+            "https://ziglang.org/download/${ZIG_VER}/zig-x86_64-linux-${ZIG_VER}.tar.xz"
           tar -xJf /tmp/zig.tar.xz -C /opt
-          echo "/opt/zig-linux-x86_64-${ZIG_VER}" >> "$GITHUB_PATH"
-          /opt/zig-linux-x86_64-${ZIG_VER}/zig version
+          echo "/opt/zig-x86_64-linux-${ZIG_VER}" >> "$GITHUB_PATH"
+          /opt/zig-x86_64-linux-${ZIG_VER}/zig version
 
       - name: Build
         run: |
